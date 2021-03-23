@@ -3,17 +3,17 @@ var y = 300;
 var forward = true;
 
 function setup() {
-  createCanvas(600, 800);
+  createCanvas(1000, 500);
 }
 
 function draw() {
-  background(255);
+  background(1);
   if (mouseIsPressed) {
-  	if(forward){
-  		forward=false;
-  	}else{
-  		forward=true;
-  	}
+    if(forward){
+      forward=false;
+    }else{
+      forward=true;
+    }
   }
   
   if (forward) {
