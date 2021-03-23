@@ -3,11 +3,11 @@ var y = 300;
 var forward = true;
 
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(600, 800);
 }
 
 function draw() {
-  background(220);
+  background(255);
   if (mouseIsPressed) {
   	if(forward){
   		forward=false;
