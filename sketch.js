@@ -21,5 +21,5 @@ function draw() {
   } else {
     x--;
   }
-  circle(x, y, 80);
+  circle(x, y, 90);
 }
