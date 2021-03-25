@@ -17,9 +17,9 @@ function draw() {
   }
   
   if (forward) {
-    x++;
-  } else {
     x--;
+  } else {
+    x++;
   }
   circle(x, y, 90);
 }
