@@ -14,6 +14,8 @@ void setup() {
   m.setMeterWidth(300);
   m.setMinScaleValue(0);
   m.setMaxScaleValue(160);
+  m.setMinInputSignal(0);
+  m.setMaxInputSignal(160);
     
   // Display digital meter value.
   m.setDisplayDigitalMeterValue(true);
@@ -28,7 +30,6 @@ void draw() {
   ivalue="75";
   println(ivalue);
   println("currentMeterValue: " + m.getCurrentMeterValue());
-  sensorValue = int(map(float(ivalue), float(0), float(1000), float(0), float(256)));
  
   m.updateMeter(int(ivalue));
   // Use a delay to see the changes.
