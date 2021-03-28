@@ -7,6 +7,7 @@ Meter speedometer;
 Meter tachometer;
 Button accelerator;
 Button brake;
+RadioButton turnSelector;
 int minSpeed = 0;
 int maxSpeed = 160;
 int speed = 0;
@@ -14,13 +15,15 @@ int maxRpms=7000;
 int minRpms=0;
 int rpms = 0;
 int turnSignal = 0;
+int savedTime;
+int totalTime = 1000;
  
 void setup() {
  
   size(1000, 500);
   background(1);
-  leftTurnSignal();
-  rightTurnSignal();
+  //saving time for the timer
+  savedTime = millis();
   speedometer = createSpeedometer(300,100,375);
   tachometer = createTachometer(50,100,210);
   cp5 = new ControlP5(this);
@@ -36,9 +39,25 @@ void setup() {
      .setPosition(250,450)
      .setSize(100,19)
      ;
+     
+  turnSelector = cp5.addRadioButton("radioButton")
+         .setPosition(400,450)
+         .setSize(30,15)
+         .setColorForeground(color(120))
+         .setColorActive(color(255))
+         .setColorLabel(color(255))
+         .setItemsPerRow(5)
+         .setSpacingColumn(25)
+         .addItem("Left",1)
+         .addItem("None",2)
+         .addItem("Right",3)
+         ;
 }
  
 void draw() {
+  
+  // This is the global timer.  It checks if 1 sec has passed. 
+  int passedTime = millis() - savedTime;
    
   //check if accelerator pedal is pressed and increase speed
   if (accelerator.isPressed()){
@@ -60,6 +79,27 @@ void draw() {
     }
   }
   
+  //Left Turn Signal.  Toggles on and off if turn selected
+  if(turnSignal==1 && passedTime < totalTime){
+    delay(150);
+    fill(0,255,0);
+  }else{
+    fill(100);
+  }
+  triangle(230, 60, 280, 40, 280, 80);
+  
+  //Right Turn Signal.  Toggles on and off if turn selected
+  if(turnSignal==2 && passedTime < totalTime){
+    delay(150);
+    fill(0,255,0);
+  }else{
+    fill(100);
+  }
+  triangle(730, 60, 680, 40, 680, 80);
+  
+  if (passedTime > totalTime) {
+    savedTime = millis(); // Save the current time to restart the timer!
+  }
   
   tachometer.updateMeter(caluclateRpmsBySpeed(speed));
   speedometer.updateMeter(speed);
@@ -143,20 +183,19 @@ int caluclateRpmsBySpeed(int speed){
   return rpm;
 }
 
-void leftTurnSignal(){
-  if(turnSignal==1){
-    fill(0,255,0);
-  }else{
-    fill(100);
+void controlEvent(ControlEvent theEvent) {
+  if(theEvent.isFrom(turnSelector)) {
+    
+    if(theEvent.getValue() == 1.0){
+      turnSignal=1;
+    }
+    
+    if(theEvent.getValue() == 2.0){
+      turnSignal=0;
+    }
+    
+    if(theEvent.getValue() == 3.0){
+      turnSignal=2;
+    }
   }
-  triangle(230, 60, 280, 40, 280, 80);
-}
-
-void rightTurnSignal(){
-  if(turnSignal==2){
-    fill(0,255,0);
-  }else{
-    fill(100);
-  }
-  triangle(730, 60, 680, 40, 680, 80);
 }
