@@ -8,6 +8,7 @@ Meter tachometer;
 Button accelerator;
 Button brake;
 RadioButton turnSelector;
+RadioButton gearSelector;
 int minSpeed = 0;
 int maxSpeed = 160;
 int speed = 0;
@@ -17,6 +18,11 @@ int rpms = 0;
 int turnSignal = 0;
 int savedTime;
 int totalTime = 1000;
+boolean isParked = false;
+boolean isDrive = false;
+boolean isNeutral = false;
+boolean isReverse = false;
+boolean isStandard = false;
  
 void setup() {
  
@@ -26,21 +32,21 @@ void setup() {
   savedTime = millis();
   speedometer = createSpeedometer(300,100,375);
   tachometer = createTachometer(50,100,210);
-  cp5 = new ControlP5(this);
   
+  cp5 = new ControlP5(this);
   accelerator = cp5.addButton("Accelerator")
      .setValue(0)
-     .setPosition(100,450)
-     .setSize(100,19)
+     .setPosition(25,450)
+     .setSize(75,19)
      ;
      
   brake = cp5.addButton("Brake")
      .setValue(0)
-     .setPosition(250,450)
-     .setSize(100,19)
+     .setPosition(125,450)
+     .setSize(75,19)
      ;
      
-  turnSelector = cp5.addRadioButton("radioButton")
+  turnSelector = cp5.addRadioButton("radioButton1")
          .setPosition(400,450)
          .setSize(30,15)
          .setColorForeground(color(120))
@@ -52,12 +58,33 @@ void setup() {
          .addItem("None",2)
          .addItem("Right",3)
          ;
+
+  gearSelector = cp5.addRadioButton("radioButton2")
+         .setPosition(600,450)
+         .setSize(30,15)
+         .setColorForeground(color(120))
+         .setColorActive(color(255))
+         .setColorLabel(color(255))
+         .setItemsPerRow(3)
+         .setSpacingColumn(40)
+         .addItem("Park",1)
+         .addItem("Reverse",2)
+         .addItem("Neutral",3)
+         .addItem("Drive",4)
+         .addItem("Standard",5)
+         ;
 }
  
 void draw() {
   
   // This is the global timer.  It checks if 1 sec has passed. 
   int passedTime = millis() - savedTime;
+  
+  //adding the Display Section
+  fill(0,0,255);
+  textSize(28);
+  textAlign(CENTER);
+  text("Car Display Stuff", 500, 70);
    
   //check if accelerator pedal is pressed and increase speed
   if (accelerator.isPressed()){
@@ -84,7 +111,7 @@ void draw() {
     delay(150);
     fill(0,255,0);
   }else{
-    fill(100);
+    fill(1);
   }
   triangle(230, 60, 280, 40, 280, 80);
   
@@ -93,7 +120,7 @@ void draw() {
     delay(150);
     fill(0,255,0);
   }else{
-    fill(100);
+    fill(1);
   }
   triangle(730, 60, 680, 40, 680, 80);
   
@@ -103,6 +130,51 @@ void draw() {
   
   tachometer.updateMeter(caluclateRpmsBySpeed(speed));
   speedometer.updateMeter(speed);
+  
+  textAlign(CENTER);
+  textSize(20);
+  if(isParked){
+    fill(255,0,0);
+  }else{
+    fill(255);
+  }
+  text("P", 400, 380);
+  
+  textAlign(CENTER);
+  textSize(20);
+  if(isReverse){
+    fill(255,0,0);
+  }else{
+    fill(255);
+  }
+  text("R", 440, 380);
+  
+  textAlign(CENTER);
+  textSize(20);
+  if(isNeutral){
+    fill(255,0,0);
+  }else{
+    fill(255);
+  }
+  text("N", 480, 380);
+  
+  textAlign(CENTER);
+  textSize(20);
+  if(isDrive){
+    fill(255,0,0);
+  }else{
+    fill(255);
+  }
+  text("D", 520, 380);
+  
+  textAlign(CENTER);
+  textSize(20);
+  if(isStandard){
+    fill(255,0,0);
+  }else{
+    fill(255);
+  }
+  text("S", 560, 380);
 }
 
 Meter createSpeedometer(int x, int y, int meterWidth){
@@ -197,5 +269,49 @@ void controlEvent(ControlEvent theEvent) {
     if(theEvent.getValue() == 3.0){
       turnSignal=2;
     }
+  }
+  
+  if(theEvent.isFrom(gearSelector)) {
+    
+    if(theEvent.getValue() == 1.0){
+      isParked = true;
+      isDrive = false;
+      isNeutral = false;
+      isReverse = false;
+      isStandard = false;
+    }
+
+    if(theEvent.getValue() == 2.0){
+      isParked = false;
+      isDrive = false;
+      isNeutral = false;
+      isReverse = true;
+      isStandard = false;
+    }
+    
+    if(theEvent.getValue() == 3.0){
+      isParked = false;
+      isDrive = false;
+      isNeutral = true;
+      isReverse = false;
+      isStandard = false;
+    }
+    
+    if(theEvent.getValue() == 4.0){
+      isParked = false;
+      isDrive = true;
+      isNeutral = false;
+      isReverse = false;
+      isStandard = false;
+    }
+    
+    if(theEvent.getValue() == 5.0){
+      isParked = false;
+      isDrive = false;
+      isNeutral = false;
+      isReverse = false;
+      isStandard = true;
+    }
+
   }
 }
