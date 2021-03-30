@@ -18,11 +18,15 @@ int rpms = 0;
 int turnSignal = 0;
 int savedTime;
 int totalTime = 1000;
+float miles = 22222.2;
+float milesInSeconds = 0;
 boolean isParked = false;
 boolean isDrive = false;
 boolean isNeutral = false;
 boolean isReverse = false;
 boolean isStandard = false;
+boolean cruiseControl = false;
+int cruiseControlSpeed = 1;
  
 void setup() {
  
@@ -79,7 +83,7 @@ void draw() {
   
   // This is the global timer.  It checks if 1 sec has passed. 
   int passedTime = millis() - savedTime;
-  
+
   //adding the Display Section
   fill(0,0,255);
   textSize(28);
@@ -106,6 +110,10 @@ void draw() {
     }
   }
   
+  if(cruiseControl){
+    speed=cruiseControlSpeed;
+  }
+  
   //Left Turn Signal.  Toggles on and off if turn selected
   if(turnSignal==1 && passedTime < totalTime){
     delay(150);
@@ -124,10 +132,21 @@ void draw() {
   }
   triangle(730, 60, 680, 40, 680, 80);
   
+    //adding the Display Section
+  fill(0,0,255);
+  textSize(20);
+  textAlign(CENTER);
+  text(miles + " mi", 500, 350);
+  
   if (passedTime > totalTime) {
     savedTime = millis(); // Save the current time to restart the timer!
+    if(speed > 0){
+      milesInSeconds = speed / 60;
+      print(milesInSeconds);
+      //print(miles);
+    }
+    
   }
-  
   tachometer.updateMeter(caluclateRpmsBySpeed(speed));
   speedometer.updateMeter(speed);
   
