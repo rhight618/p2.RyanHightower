@@ -19,8 +19,8 @@ int rpms = 0;
 int turnSignal = 0;
 int savedTime;
 int totalTime = 1000;
-float miles = 22222.2;
-float milesInSeconds = 0;
+double miles = 22222.2;
+double milesInSeconds = 0.0;
 boolean isParked = false;
 boolean isDrive = false;
 boolean isNeutral = false;
@@ -146,17 +146,18 @@ void draw() {
   }
   triangle(730, 60, 680, 40, 680, 80);
   
-    //adding the Display Section
+  //adding the Display Section
   fill(0,0,255);
   textSize(20);
   textAlign(CENTER);
-  text(miles + " mi", 500, 350);
+  text((float)miles, 500, 350);
   
   if (passedTime > totalTime) {
     savedTime = millis(); // Save the current time to restart the timer!
     if(speed > 0){
-      milesInSeconds = speed / 60;
+      milesInSeconds = (((double)speed) / 60.0) / 60.0;
       print(milesInSeconds);
+      miles+=milesInSeconds;
       //print(miles);
     }
     
