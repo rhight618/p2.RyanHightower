@@ -9,6 +9,7 @@ Button accelerator;
 Button brake;
 RadioButton turnSelector;
 RadioButton gearSelector;
+RadioButton cruiseControlSelector;
 int minSpeed = 0;
 int maxSpeed = 160;
 int speed = 0;
@@ -26,7 +27,7 @@ boolean isNeutral = false;
 boolean isReverse = false;
 boolean isStandard = false;
 boolean cruiseControl = false;
-int cruiseControlSpeed = 1;
+int cruiseControlSpeed = 0;
  
 void setup() {
  
@@ -76,6 +77,19 @@ void setup() {
          .addItem("Neutral",3)
          .addItem("Drive",4)
          .addItem("Standard",5)
+         ;
+         
+  cruiseControlSelector = cp5.addRadioButton("radioButton3")
+         .setPosition(850,450)
+         .setSize(30,15)
+         .setColorForeground(color(120))
+         .setColorActive(color(255))
+         .setColorLabel(color(255))
+         .setItemsPerRow(2)
+         .setSpacingColumn(40)
+         .addItem("Set",1)
+         .addItem("Coast",2)
+         .addItem("Off",3)
          ;
 }
  
@@ -330,6 +344,25 @@ void controlEvent(ControlEvent theEvent) {
       isNeutral = false;
       isReverse = false;
       isStandard = true;
+    }
+
+  }
+  
+  if(theEvent.isFrom(cruiseControlSelector)) {
+    
+    if(theEvent.getValue() == 1.0){
+      cruiseControl=true;
+      cruiseControlSpeed=speed;
+    }
+
+    if(theEvent.getValue() == 2.0){
+      cruiseControl=true;
+      cruiseControlSpeed=speed;
+    }
+    
+    if(theEvent.getValue() == 3.0){
+      cruiseControl=false;
+      cruiseControlSpeed=0;
     }
 
   }
