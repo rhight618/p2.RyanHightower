@@ -10,6 +10,7 @@ Button brake;
 RadioButton turnSelector;
 RadioButton gearSelector;
 RadioButton cruiseControlSelector;
+Slider fuelGuage;
 int minSpeed = 0;
 int maxSpeed = 160;
 int speed = 0;
@@ -28,11 +29,11 @@ boolean isReverse = false;
 boolean isStandard = false;
 boolean cruiseControl = false;
 int cruiseControlSpeed = 0;
+String panelText="Stuff";
  
 void setup() {
  
   size(1000, 500);
-  background(1);
   //saving time for the timer
   savedTime = millis();
   speedometer = createSpeedometer(300,100,375);
@@ -91,9 +92,21 @@ void setup() {
          .addItem("Coast",2)
          .addItem("Off",3)
          ;
+  
+ fuelGuage = cp5.addSlider("")
+       .setPosition(50,370)
+       .setSize(200,20)
+       .setRange(0,20) // values can range from big to small as well
+       .setValue(15)
+       .setNumberOfTickMarks(5)
+       .setSliderMode(Slider.FLEXIBLE)
+       ;
 }
  
 void draw() {
+  
+  background(1);
+  stroke(1);
   
   // This is the global timer.  It checks if 1 sec has passed. 
   int passedTime = millis() - savedTime;
@@ -102,18 +115,22 @@ void draw() {
   fill(0,0,255);
   textSize(28);
   textAlign(CENTER);
-  text("Car Display Stuff", 500, 70);
+  text(panelText, 500, 70);
    
   //check if accelerator pedal is pressed and increase speed
   if (accelerator.isPressed()){
     if(speed<maxSpeed){
       delay(50);
+      cruiseControl=false;
+      panelText="Cruise Control De-activated";
       speed++; 
     }
   //check if brake pedal is pressed and decrease speed quickly
   }else if(brake.isPressed()){
     if(speed>minSpeed){
       delay(10);
+      cruiseControl=false;
+      panelText="Cruise Control De-activated";
       speed--; 
     }  
   //decrease speed slowly
@@ -150,7 +167,7 @@ void draw() {
   fill(0,0,255);
   textSize(20);
   textAlign(CENTER);
-  text((float)miles, 500, 350);
+  text((float)miles + " mi", 500, 350);
   
   if (passedTime > totalTime) {
     savedTime = millis(); // Save the current time to restart the timer!
@@ -209,6 +226,8 @@ void draw() {
     fill(255);
   }
   text("S", 560, 380);
+  
+  rect(725, 100, 200, 220);
 }
 
 Meter createSpeedometer(int x, int y, int meterWidth){
@@ -354,6 +373,7 @@ void controlEvent(ControlEvent theEvent) {
     if(theEvent.getValue() == 1.0){
       cruiseControl=true;
       cruiseControlSpeed=speed;
+      panelText="Cruise Control Activated";
     }
 
     if(theEvent.getValue() == 2.0){
