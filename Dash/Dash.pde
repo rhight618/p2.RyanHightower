@@ -11,6 +11,9 @@ RadioButton turnSelector;
 RadioButton gearSelector;
 RadioButton cruiseControlSelector;
 Slider fuelGuage;
+Slider tempGuage;
+Slider oilGuage;
+MultiList settingsList;
 int minSpeed = 0;
 int maxSpeed = 160;
 int speed = 0;
@@ -22,14 +25,15 @@ int savedTime;
 int totalTime = 1000;
 double miles = 22222.2;
 double milesInSeconds = 0.0;
-boolean isParked = false;
+boolean isParked = true;
 boolean isDrive = false;
 boolean isNeutral = false;
 boolean isReverse = false;
 boolean isStandard = false;
 boolean cruiseControl = false;
 int cruiseControlSpeed = 0;
-String panelText="Stuff";
+String panelText="Welcome";
+int timeInSecs = 55000;
  
 void setup() {
  
@@ -93,14 +97,44 @@ void setup() {
          .addItem("Off",3)
          ;
   
- fuelGuage = cp5.addSlider("")
-       .setPosition(50,370)
-       .setSize(200,20)
+ fuelGuage = cp5.addSlider(" ")
+       .setPosition(50,335)
+       .setSize(205,20)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
        .setSliderMode(Slider.FLEXIBLE)
        ;
+       
+tempGuage = cp5.addSlider("  ")
+       .setPosition(725,100)
+       .setSize(20,205)
+       .setRange(0,20) // values can range from big to small as well
+       .setValue(15)
+       .setNumberOfTickMarks(5)
+       .setSliderMode(Slider.FLEXIBLE)
+       ;
+       
+oilGuage = cp5.addSlider("   ")
+       .setPosition(775,100)
+       .setSize(20,205)
+       .setRange(0,20) // values can range from big to small as well
+       .setValue(15)
+       .setNumberOfTickMarks(5)
+       .setSliderMode(Slider.FLEXIBLE)
+       ;
+ 
+    
+
+  settingsList = cp5.addMultiList("settingsList",815,100,110,20);
+  MultiListButton b;
+  b = settingsList.add("Climate",1);
+   // add items to a sublist of button "level1"
+  b.add("level11",11).setLabel("Temp");
+  b.add("level12",12).setLabel("Air Flow");
+  b = settingsList.add("Entertainment",2);
+  b.add("level21",21).setLabel("Bluetooth Audio");
+  b.add("level22",22).setLabel("AM/FM");
 }
  
 void draw() {
@@ -115,22 +149,25 @@ void draw() {
   fill(0,0,255);
   textSize(28);
   textAlign(CENTER);
-  text(panelText, 500, 70);
+  text(panelText, 490, 70);
    
   //check if accelerator pedal is pressed and increase speed
   if (accelerator.isPressed()){
     if(speed<maxSpeed){
       delay(50);
-      cruiseControl=false;
-      panelText="Cruise Control De-activated";
+      if(cruiseControl){
+        cruiseControlSpeed++;
+      }
       speed++; 
     }
   //check if brake pedal is pressed and decrease speed quickly
   }else if(brake.isPressed()){
     if(speed>minSpeed){
       delay(10);
-      cruiseControl=false;
-      panelText="Cruise Control De-activated";
+      if(cruiseControl){
+        cruiseControl=false;
+        panelText="Cruise Control Disabled";
+      }
       speed--; 
     }  
   //decrease speed slowly
@@ -167,10 +204,11 @@ void draw() {
   fill(0,0,255);
   textSize(20);
   textAlign(CENTER);
-  text((float)miles + " mi", 500, 350);
+  text((float)miles + " mi", 490, 350);
   
   if (passedTime > totalTime) {
     savedTime = millis(); // Save the current time to restart the timer!
+    timeInSecs++;
     if(speed > 0){
       milesInSeconds = (((double)speed) / 60.0) / 60.0;
       print(milesInSeconds);
@@ -189,7 +227,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("P", 400, 380);
+  text("P", 405, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -198,7 +236,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("R", 440, 380);
+  text("R", 445, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -207,7 +245,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("N", 480, 380);
+  text("N", 485, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -216,7 +254,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("D", 520, 380);
+  text("D", 525, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -225,9 +263,87 @@ void draw() {
   }else{
     fill(255);
   }
-  text("S", 560, 380);
+  text("S", 565, 380);
   
-  rect(725, 100, 200, 220);
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("E", 55, 380);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("1/2", 152, 380);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("F", 248, 380);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(0,0,255);
+  text("55°", 730, 355);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(0,0,255);
+  text("NW", 805, 355);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(0,0,255);
+  text(getDisplayTimeFromString(timeInSecs), 900, 355);
+}
+
+//converts seconds to hours:minutes:seconds for display
+String getDisplayTimeFromString(int time){
+  
+  String returnvalue = "";
+  String morning = "AM";
+    
+  if(time > 0){
+    int intTime = Integer.valueOf(time);
+    int totalMinutes = intTime / 60;
+    int remainderSeconds= intTime % 60;
+    int hours = totalMinutes / 60;
+    int remainderMinutes = totalMinutes % 60;
+    
+    if(hours>0){
+      
+      if(hours>12){
+        hours=hours / 12;
+        morning= "PM";
+      }
+      
+      returnvalue+= hours + ":";
+    }
+    
+    if(remainderMinutes>0){
+      if(hours>0){
+        returnvalue+= padWithZeros(remainderMinutes) + ":";
+      }else{
+        returnvalue+= remainderMinutes + ":";
+      }
+    }
+    
+    if(remainderMinutes>0){
+      returnvalue+= padWithZeros(remainderSeconds) + "";
+    }else{
+      returnvalue+= remainderSeconds + "";
+    }
+  }
+  
+  return returnvalue + " " + morning; 
+}
+
+String padWithZeros(int time){
+  String returnValue = str(time);
+  
+  if(returnValue.length()<2){
+    returnValue = "0" + time;
+  }
+  return returnValue;
 }
 
 Meter createSpeedometer(int x, int y, int meterWidth){
@@ -263,7 +379,7 @@ Meter createTachometer(int x, int y, int meterWidth){
     m.setMaxScaleValue(maxRpms);
     m.setMinInputSignal(0);
     m.setMaxInputSignal(7000);
-    m.setFrameColor(color(0, 100, 0));
+    m.setFrameColor(color(0, 0, 255));
     m.setTitleFontColor(color(0, 0, 0));
     m.setPivotPointColor(color(255, 0, 0));
     m.setArcColor(color(0, 0, 200));
