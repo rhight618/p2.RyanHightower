@@ -41,7 +41,7 @@ void setup() {
   //saving time for the timer
   savedTime = millis();
   speedometer = createSpeedometer(300,100,375);
-  tachometer = createTachometer(50,100,210);
+  tachometer = createTachometer(75,100,210);
   
   cp5 = new ControlP5(this);
   accelerator = cp5.addButton("Accelerator")
@@ -98,8 +98,8 @@ void setup() {
          ;
   
  fuelGuage = cp5.addSlider(" ")
-       .setPosition(50,335)
-       .setSize(205,20)
+       .setPosition(75,335)
+       .setSize(210,20)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
@@ -107,8 +107,8 @@ void setup() {
        ;
        
 tempGuage = cp5.addSlider("  ")
-       .setPosition(725,100)
-       .setSize(20,205)
+       .setPosition(30,100)
+       .setSize(20,225)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
@@ -116,8 +116,8 @@ tempGuage = cp5.addSlider("  ")
        ;
        
 oilGuage = cp5.addSlider("   ")
-       .setPosition(775,100)
-       .setSize(20,205)
+       .setPosition(725,100)
+       .setSize(20,225)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
@@ -126,7 +126,7 @@ oilGuage = cp5.addSlider("   ")
  
     
 
-  settingsList = cp5.addMultiList("settingsList",815,100,110,20);
+  settingsList = cp5.addMultiList("settingsList",775,100,110,20);
   MultiListButton b;
   b = settingsList.add("Climate",1);
    // add items to a sublist of button "level1"
@@ -268,17 +268,17 @@ void draw() {
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("E", 55, 380);
+  text("E", 80, 380);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("1/2", 152, 380);
+  text("1/2", 180, 380);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("F", 248, 380);
+  text("F", 280, 380);
   
   textAlign(CENTER);
   textSize(15);
