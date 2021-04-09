@@ -108,7 +108,7 @@ void setup() {
        
 tempGuage = cp5.addSlider("  ")
        .setPosition(30,100)
-       .setSize(20,225)
+       .setSize(20,220)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
@@ -116,8 +116,8 @@ tempGuage = cp5.addSlider("  ")
        ;
        
 oilGuage = cp5.addSlider("   ")
-       .setPosition(725,100)
-       .setSize(20,225)
+       .setPosition(950,100)
+       .setSize(20,220)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
@@ -126,7 +126,7 @@ oilGuage = cp5.addSlider("   ")
  
     
 
-  settingsList = cp5.addMultiList("settingsList",775,100,110,20);
+  settingsList = cp5.addMultiList("settingsList",710,100,100,20);
   MultiListButton b;
   b = settingsList.add("Climate",1);
    // add items to a sublist of button "level1"
@@ -220,6 +220,27 @@ void draw() {
   tachometer.updateMeter(caluclateRpmsBySpeed(speed));
   speedometer.updateMeter(speed);
   
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("H", 10, 115);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("C", 10, 315);
+
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("F", 930, 115);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(255);
+  text("E", 930, 315);
+  
+
   textAlign(CENTER);
   textSize(20);
   if(isParked){
