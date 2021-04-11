@@ -34,30 +34,39 @@ boolean cruiseControl = false;
 int cruiseControlSpeed = 0;
 String panelText="Welcome";
 int timeInSecs = 55000;
+PImage fuel, oil, temp;
  
 void setup() {
  
   size(1000, 500);
   //saving time for the timer
   savedTime = millis();
-  speedometer = createSpeedometer(300,100,375);
-  tachometer = createTachometer(75,100,210);
+  speedometer = createSpeedometer(315,100,375);
+  tachometer = createTachometer(90,100,215);
   
+  //loading icons
+  fuel = loadImage("fuelpump2.png");
+  oil = loadImage("oil2.png");
+  temp = loadImage("temp.png");
+  
+  //Accelerator button
   cp5 = new ControlP5(this);
   accelerator = cp5.addButton("Accelerator")
      .setValue(0)
-     .setPosition(25,450)
+     .setPosition(25,475)
      .setSize(75,19)
      ;
      
+  //brake button
   brake = cp5.addButton("Brake")
      .setValue(0)
-     .setPosition(125,450)
+     .setPosition(125,475)
      .setSize(75,19)
      ;
-     
+  
+  //turn signal select
   turnSelector = cp5.addRadioButton("radioButton1")
-         .setPosition(400,450)
+         .setPosition(250,475)
          .setSize(30,15)
          .setColorForeground(color(120))
          .setColorActive(color(255))
@@ -67,10 +76,12 @@ void setup() {
          .addItem("Left",1)
          .addItem("None",2)
          .addItem("Right",3)
+         .activate(1)
          ;
 
+  //gear select
   gearSelector = cp5.addRadioButton("radioButton2")
-         .setPosition(600,450)
+         .setPosition(500,462)
          .setSize(30,15)
          .setColorForeground(color(120))
          .setColorActive(color(255))
@@ -82,10 +93,12 @@ void setup() {
          .addItem("Neutral",3)
          .addItem("Drive",4)
          .addItem("Standard",5)
+         .activate(0);
          ;
-         
+  
+  //cruise control select
   cruiseControlSelector = cp5.addRadioButton("radioButton3")
-         .setPosition(850,450)
+         .setPosition(825,460)
          .setSize(30,15)
          .setColorForeground(color(120))
          .setColorActive(color(255))
@@ -95,46 +108,61 @@ void setup() {
          .addItem("Set",1)
          .addItem("Coast",2)
          .addItem("Off",3)
+         .activate(2)
          ;
   
+ //fuel guage
  fuelGuage = cp5.addSlider(" ")
-       .setPosition(75,335)
+       .setPosition(90,335)
        .setSize(210,20)
        .setRange(0,20) // values can range from big to small as well
        .setValue(15)
        .setNumberOfTickMarks(5)
        .setSliderMode(Slider.FLEXIBLE)
        ;
-       
+// temp guage    
 tempGuage = cp5.addSlider("  ")
-       .setPosition(30,100)
+       .setPosition(45,100)
        .setSize(20,220)
-       .setRange(0,20) // values can range from big to small as well
-       .setValue(15)
-       .setNumberOfTickMarks(5)
+       .setRange(0,300) // values can range from big to small as well
+       .setValue(120)
+       .setNumberOfTickMarks(10)
        .setSliderMode(Slider.FLEXIBLE)
        ;
-       
+//oil guage    
 oilGuage = cp5.addSlider("   ")
        .setPosition(950,100)
        .setSize(20,220)
-       .setRange(0,20) // values can range from big to small as well
-       .setValue(15)
-       .setNumberOfTickMarks(5)
+       .setRange(0,100) // values can range from big to small as well
+       .setValue(45)
+       .setNumberOfTickMarks(10)
        .setSliderMode(Slider.FLEXIBLE)
        ;
  
     
-
-  settingsList = cp5.addMultiList("settingsList",710,100,100,20);
+  //items list
+  settingsList = cp5.addMultiList("settingsList",710,108,100,20);
   MultiListButton b;
   b = settingsList.add("Climate",1);
-   // add items to a sublist of button "level1"
   b.add("level11",11).setLabel("Temp");
   b.add("level12",12).setLabel("Air Flow");
+  
   b = settingsList.add("Entertainment",2);
   b.add("level21",21).setLabel("Bluetooth Audio");
   b.add("level22",22).setLabel("AM/FM");
+  
+  b = settingsList.add("Phone",3);
+  b.add("level31",31).setLabel("Call");
+  b.add("level32",32).setLabel("Contacts");
+  b.add("level33",33).setLabel("Hands Free");
+  
+  b = settingsList.add("Compass",4);
+  b = settingsList.add("Maintenance",5);
+  
+  b = settingsList.add("Settings",6);
+  b.add("level61",61).setLabel("Add Device");
+  b.add("level62",62).setLabel("Set Clock");
+  b.add("level63",63).setLabel("Info");
 }
  
 void draw() {
@@ -149,10 +177,10 @@ void draw() {
   fill(0,0,255);
   textSize(28);
   textAlign(CENTER);
-  text(panelText, 490, 70);
+  text(panelText, 500, 70);
    
   //check if accelerator pedal is pressed and increase speed
-  if (accelerator.isPressed()){
+  if (accelerator.isPressed() && !isParked){
     if(speed<maxSpeed){
       delay(50);
       if(cruiseControl){
@@ -167,6 +195,7 @@ void draw() {
       if(cruiseControl){
         cruiseControl=false;
         panelText="Cruise Control Disabled";
+        cruiseControlSelector.activate(2);
       }
       speed--; 
     }  
@@ -178,6 +207,7 @@ void draw() {
     }
   }
   
+  //set speed if cruise is activated
   if(cruiseControl){
     speed=cruiseControlSpeed;
   }
@@ -198,47 +228,49 @@ void draw() {
   }else{
     fill(1);
   }
-  triangle(730, 60, 680, 40, 680, 80);
+  triangle(780, 60, 730, 40, 730, 80);
   
   //adding the Display Section
   fill(0,0,255);
   textSize(20);
   textAlign(CENTER);
-  text((float)miles + " mi", 490, 350);
+  text((float)miles + " mi", 515, 350);
   
+  //checking if 1 second has passed and do things
   if (passedTime > totalTime) {
     savedTime = millis(); // Save the current time to restart the timer!
     timeInSecs++;
     if(speed > 0){
       milesInSeconds = (((double)speed) / 60.0) / 60.0;
-      print(milesInSeconds);
+      //print(milesInSeconds);
       miles+=milesInSeconds;
       //print(miles);
     }
     
   }
+  //meters
   tachometer.updateMeter(caluclateRpmsBySpeed(speed));
   speedometer.updateMeter(speed);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("H", 10, 115);
+  text("H", 25, 115);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("C", 10, 315);
+  text("C", 25, 315);
 
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("F", 930, 115);
+  text("H", 930, 115);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("E", 930, 315);
+  text("L", 930, 315);
   
 
   textAlign(CENTER);
@@ -248,7 +280,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("P", 405, 380);
+  text("P", 420, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -257,7 +289,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("R", 445, 380);
+  text("R", 465, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -266,7 +298,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("N", 485, 380);
+  text("N", 505, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -275,7 +307,7 @@ void draw() {
   }else{
     fill(255);
   }
-  text("D", 525, 380);
+  text("D", 545, 380);
   
   textAlign(CENTER);
   textSize(20);
@@ -284,37 +316,57 @@ void draw() {
   }else{
     fill(255);
   }
-  text("S", 565, 380);
+  text("S", 585, 380);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("E", 80, 380);
+  text("E", 95, 380);
+  
+  image(fuel, 185, 370);
+  image(oil, 920, 205);
+  image(temp, 10, 195);
   
   textAlign(CENTER);
   textSize(15);
   fill(255);
-  text("1/2", 180, 380);
+  text("F", 295, 380);
   
   textAlign(CENTER);
   textSize(15);
+  fill(0,0,255);
+  text("55°", 717, 350);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(0,0,255);
+  text("NW", 815, 350);
+  
+  textAlign(CENTER);
+  textSize(15);
+  fill(0,0,255);
+  text(getDisplayTimeFromString(timeInSecs), 930, 350);
+  
+  stroke(0,0,255); 
+  strokeWeight(4);
   fill(255);
-  text("F", 280, 380);
+  rect(705, 103, 210, 217);
   
   textAlign(CENTER);
-  textSize(15);
-  fill(0,0,255);
-  text("55°", 730, 355);
+  textSize(12);
+  fill(255);
+  text("Turn Signal", 330, 470);
   
   textAlign(CENTER);
-  textSize(15);
-  fill(0,0,255);
-  text("NW", 805, 355);
+  textSize(12);
+  fill(255);
+  text("Gear Selector", 600, 455);
   
   textAlign(CENTER);
-  textSize(15);
-  fill(0,0,255);
-  text(getDisplayTimeFromString(timeInSecs), 900, 355);
+  textSize(12);
+  fill(255);
+  text("Cruise Control", 900, 455);
+  
 }
 
 //converts seconds to hours:minutes:seconds for display
@@ -378,8 +430,8 @@ Meter createSpeedometer(int x, int y, int meterWidth){
     m.setTitleFontColor(color(0, 0, 0));
     m.setPivotPointColor(color(255, 0, 0));
     m.setArcColor(color(0, 0, 200));
-    m.setScaleFontColor(color(200, 100, 0));
-    m.setTicMarkColor(color(217, 22, 247));
+    m.setScaleFontColor(color(0, 100, 0));
+    m.setTicMarkColor(color(0, 0, 225));
     m.setArcMinDegrees(180.0); // (start)
     m.setArcMaxDegrees(360.0); // ( end)
       
@@ -404,8 +456,8 @@ Meter createTachometer(int x, int y, int meterWidth){
     m.setTitleFontColor(color(0, 0, 0));
     m.setPivotPointColor(color(255, 0, 0));
     m.setArcColor(color(0, 0, 200));
-    m.setScaleFontColor(color(200, 100, 0));
-    m.setTicMarkColor(color(217, 22, 247));
+    m.setScaleFontColor(color(0, 100, 0));
+    m.setTicMarkColor(color(0, 0, 225));
     m.setArcMinDegrees(90.0); // (start)
     m.setArcMaxDegrees(300.0); // ( end)
       
@@ -524,4 +576,39 @@ void controlEvent(ControlEvent theEvent) {
     }
 
   }
+  
+  if(theEvent.isFrom(fuelGuage)) {
+    
+    if(theEvent.getValue() <= 5.0){
+      panelText="Low Fuel";
+    }else{
+      panelText="Welcome";
+    }
+     
+  }
+  
+  if(theEvent.isFrom(tempGuage)) {
+    
+    if(theEvent.getValue() <= 50.0){
+      panelText="Engine Cold";
+    }else if (theEvent.getValue() >= 250.0){
+      panelText="Engine Overheat";
+    }else{
+      panelText="Welcome";
+    }
+     
+  }
+  
+  if(theEvent.isFrom(oilGuage)) {
+    
+    if(theEvent.getValue() <= 25.0){
+      panelText="Low Oil";
+    }else if (theEvent.getValue() >= 75.0){
+      panelText="High Oil";
+    }else{
+      panelText="Welcome";
+    }
+     
+  }
+  
 }
