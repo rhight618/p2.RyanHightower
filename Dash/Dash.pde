@@ -355,17 +355,21 @@ void draw() {
   textAlign(CENTER);
   textSize(12);
   fill(255);
-  text("Turn Signal", 330, 470);
+  text("Turn Signal", 330, 450);
   
   textAlign(CENTER);
   textSize(12);
   fill(255);
-  text("Gear Selector", 600, 455);
+  text("Gear Selector", 600, 450);
   
   textAlign(CENTER);
   textSize(12);
   fill(255);
-  text("Cruise Control", 900, 455);
+  text("Cruise Control", 900, 450);
+  
+  stroke(150);
+  strokeWeight(1);
+  line(1, 430, 999, 430);
   
 }
 
