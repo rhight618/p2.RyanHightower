@@ -66,7 +66,7 @@ void setup() {
   
   //turn signal select
   turnSelector = cp5.addRadioButton("radioButton1")
-         .setPosition(250,475)
+         .setPosition(225,475)
          .setSize(30,15)
          .setColorForeground(color(120))
          .setColorActive(color(255))
@@ -76,6 +76,7 @@ void setup() {
          .addItem("Left",1)
          .addItem("None",2)
          .addItem("Right",3)
+         .addItem("Hazard",4)
          .activate(1)
          ;
 
@@ -213,7 +214,7 @@ void draw() {
   }
   
   //Left Turn Signal.  Toggles on and off if turn selected
-  if(turnSignal==1 && passedTime < totalTime){
+  if((turnSignal==1 || turnSignal==3) && passedTime < totalTime){
     delay(150);
     fill(0,255,0);
   }else{
@@ -222,7 +223,7 @@ void draw() {
   triangle(230, 60, 280, 40, 280, 80);
   
   //Right Turn Signal.  Toggles on and off if turn selected
-  if(turnSignal==2 && passedTime < totalTime){
+  if((turnSignal==2 || turnSignal==3) && passedTime < totalTime){
     delay(150);
     fill(0,255,0);
   }else{
@@ -514,6 +515,10 @@ void controlEvent(ControlEvent theEvent) {
     
     if(theEvent.getValue() == 3.0){
       turnSignal=2;
+    }
+    
+    if(theEvent.getValue() == 4.0){
+      turnSignal=3;
     }
   }
   
